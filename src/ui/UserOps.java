@@ -8,10 +8,10 @@ class UserOps {
 	public void greet(LoginRegister user) {
 		
 		String[] option = {"Show info", "Change name", "Change mail",
-				"Change DOB", "Logout"};
+				"Withdraw", "Deposit", "Logout"};
 		
 		int choice = 0;
-		while (choice != 4) {
+		while (choice != 5) {
 			
 			choice = JOptionPane.showOptionDialog(null, "Choose an option", "Hello, "+ user,
 					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
@@ -28,9 +28,12 @@ class UserOps {
 					changeMail(user);
 					break;
 				case 3:
-					changeDOB(user);
+					withdraw(user);
 					break;
 				case 4:
+					deposit(user);
+					break;
+				case 5:
 					return;
 			}
 		}
@@ -38,7 +41,7 @@ class UserOps {
 
 	public void userInfo(LoginRegister user) {
 		JOptionPane.showMessageDialog(null, "Name: "+ user.name + "\nE-mail: "
-				+user.email+"\nDOB: "+ user.dob);
+				+user.email+"\nBalance: "+ user.balance);
 	}
 
 	public void changeName(LoginRegister user) {
@@ -51,7 +54,6 @@ class UserOps {
 			return;
 	}
 		
-
 	public void changeMail(LoginRegister user) {
 		String newMail = JOptionPane.showInputDialog("Enter new mailID");
 		if (newMail != null) {
@@ -62,16 +64,44 @@ class UserOps {
 			return;
 	}
 
-	public void changeDOB(LoginRegister user) {
-		String newDOB = JOptionPane.showInputDialog("Enter new date of birth");
-		if (newDOB != null) {
-			user.dob = newDOB;
-			JOptionPane.showMessageDialog(null, "<html><span style='color:green'>User details updated</span></html>");
+	public void withdraw(LoginRegister user) {
+		if (pinCheck(user) == true) {
+			double amt = Double.parseDouble(JOptionPane.showInputDialog("Balance: " + user.balance
+					+ "\nEnter withdraw amount"));
+			
+			if (user.balance - amt < 0) {
+				JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Balance not sufficient</span></html>");
+				return;
+			}
+			else {
+				user.balance -= amt;
+				JOptionPane.showMessageDialog(null, "Current balance: "+ user.balance);
+			}
 		}
-		else
-			return;
+		else {
+			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>PIN not correct!!</span></html>");
+		}
 	}
-
+	
+	public void deposit(LoginRegister user) {
+		if (pinCheck(user) == true) {
+			double amt = Double.parseDouble(JOptionPane.showInputDialog("Balance: " + user.balance
+					+ "\nEnter deposit amount"));
+			
+			user.balance += amt;
+			JOptionPane.showMessageDialog(null, "Current balance: "+ user.balance);
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>PIN not correct!!</span></html>");
+		}
+	}
+	
+	public boolean pinCheck(LoginRegister user) {
+		int pin = Integer.parseInt(JOptionPane.showInputDialog("Enter PIN"));
+		if (pin == user.pin)
+			return true;
+		return false;
+	}
 }
 
 class Database {

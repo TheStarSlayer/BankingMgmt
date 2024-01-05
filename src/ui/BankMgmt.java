@@ -6,7 +6,9 @@ import javax.swing.JOptionPane;
 class LoginRegister {
 	
 	private int i;
-	protected String name, email, dob;
+	protected String name, email;
+	protected double balance;
+	protected int pin = 0;
 	private String userID, passwd;
 	
 	Database db = new Database();
@@ -77,7 +79,17 @@ class LoginRegister {
 				
 				userInst.name = JOptionPane.showInputDialog("Enter name");
 				userInst.email = JOptionPane.showInputDialog("Enter email");
-				userInst.dob = JOptionPane.showInputDialog("Enter date of birth");
+				userInst.balance = Double.parseDouble(JOptionPane.showInputDialog("Enter balance"));
+				
+				int k = 1;
+				while (k != userInst.pin) {
+					userInst.pin = Integer.parseInt(JOptionPane.showInputDialog("Enter PIN"));
+					k = Integer.parseInt(JOptionPane.showInputDialog("Re-enter PIN"));
+					
+					if (k != userInst.pin) {
+						JOptionPane.showMessageDialog(null, "<html><span style='color:red'>PIN does not match!</span></html>");
+					}
+				}
 				
 				inst.add(userInst);
 				JOptionPane.showMessageDialog(null, "<html><span style='color:green'>User details updated.  Please login again</span></html>");
@@ -99,7 +111,7 @@ class LoginRegister {
 	}
 }
 
-public class UiRun {
+public class BankMgmt {
 	public static void main(String[] args) {
 		LoginRegister ui = new LoginRegister();
 		ui.mainMenu();
