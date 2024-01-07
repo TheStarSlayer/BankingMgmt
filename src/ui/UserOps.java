@@ -66,6 +66,11 @@ class UserOps {
 	}
 
 	public void withdraw(LoginRegister user) {
+		if (user.pin == 0) {
+			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Set PIN to withdraw</span></html>");
+			return;
+		}
+		
 		try {
 			if (pinCheck(user) == true) {
 				double amt = Double.parseDouble(JOptionPane.showInputDialog("Balance: " + user.balance
