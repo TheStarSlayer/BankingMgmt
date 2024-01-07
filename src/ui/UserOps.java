@@ -8,10 +8,10 @@ class UserOps {
 	public void greet(LoginRegister user) {
 		
 		String[] option = {"Show info", "Change name", "Change mail",
-				"Withdraw", "Deposit", "Logout"};
+				"Withdraw", "Deposit", "Change PIN", "Logout"};
 		
 		int choice = 0;
-		while (choice != 5) {
+		while (choice != 6) {
 			
 			choice = JOptionPane.showOptionDialog(null, "Choose an option", "Hello, "+ user,
 					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
@@ -34,6 +34,7 @@ class UserOps {
 					deposit(user);
 					break;
 				case 5:
+					changePIN(user);
 					return;
 			}
 		}
@@ -65,42 +66,81 @@ class UserOps {
 	}
 
 	public void withdraw(LoginRegister user) {
-		if (pinCheck(user) == true) {
-			double amt = Double.parseDouble(JOptionPane.showInputDialog("Balance: " + user.balance
-					+ "\nEnter withdraw amount"));
-			
-			if (user.balance - amt < 0) {
-				JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Balance not sufficient</span></html>");
-				return;
+		try {
+			if (pinCheck(user) == true) {
+				double amt = Double.parseDouble(JOptionPane.showInputDialog("Balance: " + user.balance
+						+ "\nEnter withdraw amount"));
+				
+				if (user.balance - amt < 0) {
+					JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Balance not sufficient</span></html>");
+					return;
+				}
+				else {
+					user.balance -= amt;
+					JOptionPane.showMessageDialog(null, "Current balance: "+ user.balance);
+				}
 			}
 			else {
-				user.balance -= amt;
-				JOptionPane.showMessageDialog(null, "Current balance: "+ user.balance);
+				JOptionPane.showMessageDialog(null, "<html><span style='color:red'>PIN not correct!!</span></html>");
 			}
 		}
-		else {
-			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>PIN not correct!!</span></html>");
+		catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Cancelled</span></html>");
+			return;
 		}
 	}
 	
 	public void deposit(LoginRegister user) {
-		if (pinCheck(user) == true) {
-			double amt = Double.parseDouble(JOptionPane.showInputDialog("Balance: " + user.balance
-					+ "\nEnter deposit amount"));
-			
-			user.balance += amt;
-			JOptionPane.showMessageDialog(null, "Current balance: "+ user.balance);
+		if (user.pin == 0) {
+			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Set PIN to deposit</span></html>");
+			return;
 		}
-		else {
-			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>PIN not correct!!</span></html>");
+		
+		try {
+			if (pinCheck(user) == true) {
+				double amt = Double.parseDouble(JOptionPane.showInputDialog("Balance: " + user.balance
+						+ "\nEnter deposit amount"));
+				
+				user.balance += amt;
+				JOptionPane.showMessageDialog(null, "Current balance: "+ user.balance);
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "<html><span style='color:red'>PIN not correct!!</span></html>");
+			}
+		}
+		catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Cancelled</span></html>");
+			return;
 		}
 	}
 	
 	public boolean pinCheck(LoginRegister user) {
-		int pin = Integer.parseInt(JOptionPane.showInputDialog("Enter PIN"));
-		if (pin == user.pin)
-			return true;
+		try {
+			int pin = Integer.parseInt(JOptionPane.showInputDialog("Enter PIN"));
+			if (pin == user.pin)
+				return true;
+			}
+		catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Cancelled</span></html>");
+		}
 		return false;
+	}
+
+	public void changePIN(LoginRegister user) {
+		int k = 1;
+		while (k != user.pin) {
+			try {
+				user.pin = Integer.parseInt(JOptionPane.showInputDialog("Enter PIN"));
+				k = Integer.parseInt(JOptionPane.showInputDialog("Re-enter PIN"));
+			}
+			catch (NumberFormatException nfe) {
+				JOptionPane.showMessageDialog(null, "<html><span style='color:red'>Improper PIN</span></html>");
+				continue;
+			}
+			if (k != user.pin) {
+				JOptionPane.showMessageDialog(null, "<html><span style='color:red'>PIN does not match!</span></html>");				
+			}
+		}
 	}
 }
 
@@ -131,3 +171,4 @@ class Database {
 		return users.size();
 	}
 }
+
